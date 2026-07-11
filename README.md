@@ -1,6 +1,6 @@
 # Hamsi
 
-Hamsi (named after the fast and agile Black Sea anchovy) is an LLM-based autocompletion tool for the **Fish shell**. It intercepts your key presses to request smart, context-aware command completions from a locally-hosted **Ollama** LLM based on your recent command history and what you have currently typed.
+Hamsi (named after the fast and agile Black Sea anchovy) is an LLM-based autocompletion tool for the **Fish shell**. It intercepts your key presses to request context-aware command completions from a locally-hosted **Ollama** LLM based on your recent command history and what you have currently typed.
 
 Currently, Hamsi is written in **pure Fish shell script**, making it easy to install and inspect, with no heavy runtimes required.
 
@@ -27,7 +27,7 @@ Currently, Hamsi is written in **pure Fish shell script**, making it easy to ins
 - **Ollama** running locally (e.g. `http://localhost:11434`)
 - **jq** (for fast, robust JSON construction and parsing)
 - **curl**
-
+- **qwen2.5-coder:1.5b** (recommended)
 ---
 
 ## Installation
@@ -95,7 +95,7 @@ set -g hamsi_accept_keybinding \cy
 
 1. Start typing a command in your shell, e.g., `git comm`.
 2. Press `Ctrl+O` (or your configured trigger key).
-3. A subtle `[hamsi thinking...]` indicator will appear, and then the suggestion (e.g., `it -m "initial commit"`) will be shown after your cursor.
+3. A `[hamsi thinking...]` indicator will appear, and then the suggestion (e.g., `it -m "initial commit"`) will be shown after your cursor.
 4. **Accept** the suggestion: Press `Ctrl+Y` (or your configured accept key). The cursor moves to the end of the text.
 5. **Discard/Revert**: 
    - Press `Ctrl+O` again (or `Ctrl+G` / `Backspace`). The suggestion disappears.
@@ -106,12 +106,12 @@ set -g hamsi_accept_keybinding \cy
 ## Roadmap
 
 - [x] Pure Fish prototype.
-- [ ] Support for multiple suggestion cycling.
 - [ ] Go/Rust backend daemon:
   - Asynchronous background worker (no shell stuttering).
   - Shell-agnostic integration.
   - SQLite cache for past suggestions.
   - Better context parsing (detecting project directories, git branches).
+- [ ] integration with GPT/Claude/Gemini
 
 ---
 
