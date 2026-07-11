@@ -42,6 +42,7 @@ function hamsi_trigger --description "Fetch autocompletion from Ollama and show 
             if test -n "$local_files"
                 set prefix "$prefix# Files in directory: $local_files\n"
             end
+            set prefix "$prefix# Note: Complete only the current command. Do not chain commands or add pipes (|).\n"
             set prefix "$prefix$text_before"
 
             set -l prompt "<|fim_prefix|>$prefix<|fim_suffix|>$text_after<|fim_middle|>"
@@ -59,7 +60,7 @@ function hamsi_trigger --description "Fetch autocompletion from Ollama and show 
             }')
         else
             # JSON format prompt structure
-            set -l system_prompt "You are a terminal autocomplete AI. You must output ONLY a JSON object containing the exact characters to append to the user's input. Do NOT repeat the user's input. Format: {\"completion\": \"suffix_here\"}"
+            set -l system_prompt "You are a terminal autocomplete AI. You must output ONLY a JSON object containing the exact characters to append to the user's input. Do NOT repeat the user's input. Complete only the current command and do NOT chain commands or add pipes (|). Format: {\"completion\": \"suffix_here\"}"
             
             set -l prompt "Recent history:\n"
             for cmd in $reversed
