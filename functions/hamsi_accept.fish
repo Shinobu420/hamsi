@@ -1,7 +1,11 @@
 function hamsi_accept --description "Accept the active autocompletion suggestion"
     if test "$hamsi_in_preview" = 1
-        set -l new_cursor (math $hamsi_original_cursor + (string length "$hamsi_suggestion"))
-        commandline -C $new_cursor
+        set -l current_buffer (commandline -b)
+        set -l current_cursor (commandline -C)
+        if test "$current_buffer" = "$hamsi_original_buffer"; and test $current_cursor -eq $hamsi_original_cursor
+            # Buffer hasn't changed, insert suggestion
+            commandline -i "$hamsi_suggestion"
+        end
         set -e hamsi_in_preview
         set -e hamsi_original_buffer
         set -e hamsi_original_cursor
