@@ -111,8 +111,8 @@ set -g hamsi_accept_keybinding \cy
   - Shell-agnostic integration.
   - SQLite cache for past suggestions.
   - Better context parsing (detecting project directories, git branches).
-- [ ] integration with GPT/Claude/Gemini
-
+- [ ] Integration with GPT/Claude/Gemini
+- [ ] Typo correction
 ---
 
 ## License
