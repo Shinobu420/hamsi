@@ -2,10 +2,7 @@
 
 Hamsi (named after the fast and agile Black Sea anchovy) is an LLM-based autocompletion tool for the **Fish shell**. It intercepts your key presses to request context-aware command completions from a locally-hosted **Ollama** LLM based on your recent command history and what you have currently typed.
 
-Currently, Hamsi is written in **pure Fish shell script**, making it easy to install and inspect, with no heavy runtimes required.
-
-> [!NOTE]
-> **Future Goal**: While Hamsi starts as a pure Fish shell plugin, the long-term goal is to migrate the backend to a **Go or Rust based daemon**. This will allow for asynchronous execution, lower latency, local request caching, and complex context merging.
+Hamsi uses a hybrid architecture: a lightweight **Fish shell frontend** handles terminal inputs, keybindings, and ghost text rendering, while a compiled **Rust backend** handles asynchronous Ollama API requests, ensuring zero stuttering or blocking in the shell UI.
 
 ---
 
@@ -25,8 +22,7 @@ Currently, Hamsi is written in **pure Fish shell script**, making it easy to ins
 
 - **Fish shell** (v3.0.0 or higher)
 - **Ollama** running locally (e.g. `http://localhost:11434`)
-- **jq** (for fast, robust JSON construction and parsing)
-- **curl**
+- **Rust / Cargo** (to build the compiled backend during installation)
 - **qwen2.5-coder:1.5b** (recommended)
 ---
 
@@ -62,29 +58,35 @@ fisher install yourusername/hamsi
 
 ## Configuration
 
-Hamsi can be configured by creating a configuration file at `~/.config/hamsi/config.fish`. 
+You can configure Hamsi interactively by running the configuration script:
+```bash
+./configure_model.fish
+```
+This script lists recommended models, checks if they are installed in Ollama, pulls them if missing, and updates your config.
+
+Alternatively, you can manually configure Hamsi by editing the configuration file at `~/.config/hamsi/hamsi.conf`. 
 
 Here is a template with all default settings:
 
-```fish
-# ~/.config/hamsi/config.fish
+```ini
+# ~/.config/hamsi/hamsi.conf
 
 # 1. Choose your locally hosted Ollama model
-# Recommended fast model: qwen3.5:9b (installed) or qwen2.5-coder:1.5b
-set -g hamsi_model "qwen3.5:9b"
+# Recommended fast model: qwen2.5-coder:1.5b
+model = qwen2.5-coder:1.5b
 
 # 2. Set the Ollama API endpoint
-set -g hamsi_api_url "http://localhost:11434/api/generate"
+api_url = http://localhost:11434/api/generate
 
 # 3. Specify how many past commands to send for context
-set -g hamsi_history_limit 5
+history_limit = 5
 
 # 4. Configure keybindings
 # Trigger completion (default: Ctrl+O)
-set -g hamsi_keybinding \co
+keybinding = \co
 
 # Accept suggestion (default: Ctrl+Y)
-set -g hamsi_accept_keybinding \cy
+accept_keybinding = \cy
 ```
 
 
@@ -106,13 +108,11 @@ set -g hamsi_accept_keybinding \cy
 ## Roadmap
 
 - [x] Pure Fish prototype.
-- [ ] Go/Rust backend daemon:
-  - Asynchronous background worker (no shell stuttering).
-  - Shell-agnostic integration.
-  - SQLite cache for past suggestions.
-  - Better context parsing (detecting project directories, git branches).
-- [ ] Integration with GPT/Claude/Gemini
-- [ ] Typo correction
+- [x] Rust asynchronous backend.
+- [ ] SQLite Local Cache.
+- [ ] Daemon Integration.
+- [ ] Integration with GPT/Claude/Gemini.
+- [ ] Typo correction.
 ---
 
 ## License

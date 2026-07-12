@@ -14,6 +14,22 @@ set -l src_dir (dirname (status filename))
 
 echo "Installing Hamsi..."
 
+# Compile Rust backend
+echo "  -> Compiling Rust backend (hamsi)..."
+if command -q cargo
+    cargo build --release --manifest-path "$src_dir/Cargo.toml"
+    if test $status -eq 0
+        mkdir -p "$HOME/.config/hamsi/bin"
+        cp "$src_dir/target/release/hamsi" "$HOME/.config/hamsi/bin/hamsi"
+        echo "  -> Rust backend successfully built and installed to ~/.config/hamsi/bin/hamsi"
+    else
+        echo "  Error: Failed to compile Rust backend."
+        exit 1
+    end
+else
+    echo "  Error: Rust/Cargo is not installed. Please install Rust (https://rustup.rs/) to compile Hamsi."
+    exit 1
+end
 #Copy configurations
 echo "  -> Copying conf.d/hamsi.fish"
 cp "$src_dir/conf.d/hamsi.fish" "$conf_target/hamsi.fish"
@@ -26,16 +42,16 @@ end
 
 #Setup template custom config directory if not present
 mkdir -p "$HOME/.config/hamsi"
-if not test -f "$HOME/.config/hamsi/config.fish"
-    echo "# Custom Hamsi Settings
-#
-# Choose your locally hosted Ollama model
-# set -g hamsi_model \"qwen2.5-coder:1.5b\"
-#
-# Prompt format format (\"fim\" or \"json\")
-# set -g hamsi_prompt_format \"fim\"
-" > "$HOME/.config/hamsi/config.fish"
-    echo "  -> Created template configuration at ~/.config/hamsi/config.fish"
+if not test -f "$HOME/.config/hamsi/hamsi.conf"
+    cp "$src_dir/conf.d/hamsi.conf" "$HOME/.config/hamsi/hamsi.conf"
+    echo "  -> Created template configuration at ~/.config/hamsi/hamsi.conf"
+end
+
+# Optional model configuration
+echo "Do you want to run the Hamsi model configurator now? [Y/n]"
+read -l confirm_config -p 'echo "> "'
+if not string match -ri '^(n|no)$' "$confirm_config"
+    fish "$src_dir/configure_model.fish"
 end
 
 #Activate in current shell

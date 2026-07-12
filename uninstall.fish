@@ -18,6 +18,12 @@ if test -f "$conf_target/hamsi.fish"
     rm "$conf_target/hamsi.fish"
 end
 
+# Remove binary
+if test -f "$HOME/.config/hamsi/bin/hamsi"
+    echo "  -> Removing Rust backend binary"
+    rm -f "$HOME/.config/hamsi/bin/hamsi"
+end
+
 #Remove functions
 echo "  -> Removing function files"
 for f in "$func_target/"hamsi_*.fish
